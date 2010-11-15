@@ -24,3 +24,22 @@ Show Album page HTML hooks:
 
 ----------------------------------------
 
+= REQUIREMENTS
+
+- bash
+- wget
+- imagemagick
+
+
+= (C) and LICENSE
+== Code
+(c) Fabricio Zuardi 2010
+MIT license
+
+== Pictures
+(c) Agencia Brasil
+Creative Commons Atribuição 2.5 Brasil http://creativecommons.org/licenses/by/2.5/br/
+
+=== Snippet from http://agenciabrasil.ebc.com.br/ footer (as of November 15, 2010) in Portuguese
+
+“Todo o conteúdo deste site está publicado sob a Licença Creative Commons Atribuição 2.5. Brasil.””
