@@ -1,4 +1,5 @@
 #!/bun/bash
+DATA_PATH="data"
 if [ -z $1 ]
 then
   echo "Get a sequence of photos from agencia brazil's website. (wget is required)"
@@ -13,11 +14,11 @@ else
   fi
   while [ $STEP -le $2 ]
   do
-    if [ ! -d "data/images/$SIZE/$STEP" ]
+    if [ ! -d "$DATA_PATH/images/$SIZE/$STEP" ]
     then
-      wget --content-disposition "http://agenciabrasil.ebc.com.br/galeriaimagens/images/fotos/$STEP/$SIZE?p_p_id=galeria" -P "data/images/$SIZE/$STEP"
+      wget --content-disposition "http://agenciabrasil.ebc.com.br/galeriaimagens/images/fotos/$STEP/$SIZE?p_p_id=galeria" -P "$DATA_PATH/images/$SIZE/$STEP"
     else
-      echo "data/images/$SIZE/$STEP exists already, skipped."
+      echo "$DATA_PATH/images/$SIZE/$STEP exists already, skipped."
     fi
     ((STEP++))
   done

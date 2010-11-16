@@ -1,4 +1,5 @@
 #!/bun/bash
+DATA_PATH="data"
 if [ -z $1 ]
 then
   echo "Get a sequence of html pages from the agencia brazil's album list view. (wget is required)"
@@ -11,7 +12,7 @@ else
   do
     PAGE=$((LAST_PAGE - $STEP + 1))
     echo "Getting page $PAGE..."
-    wget --content-disposition "http://agenciabrasil.ebc.com.br/ultimasfotos?p_p_id=galeria&_galeria_railsRoute=%2Fgerenciador_galeria%2Fgaleria%3Fpage%3D$PAGE/high?p_p_id=galeria" -P "data/html/list_albums/first_2010_02_12_asc/$STEP"
+    wget --content-disposition "http://agenciabrasil.ebc.com.br/ultimasfotos?p_p_id=galeria&_galeria_railsRoute=%2Fgerenciador_galeria%2Fgaleria%3Fpage%3D$PAGE/high?p_p_id=galeria" -P "$DATA_PATH/html/list_albums/first_2010_02_12_asc/$STEP"
     ((STEP++))
   done
 fi

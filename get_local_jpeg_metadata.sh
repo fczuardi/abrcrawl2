@@ -1,6 +1,7 @@
 #!/bun/bash
-IMAGES_DIRECTORY="data/images/high"
-METADATA_DIRECTORY="data/images/metadata"
+DATA_PATH="data"
+IMAGES_DIRECTORY="$DATA_PATH/images/high"
+METADATA_DIRECTORY="$DATA_PATH/images/metadata"
 STEP=$1
 if [ -d "$IMAGES_DIRECTORY" ]
 then
