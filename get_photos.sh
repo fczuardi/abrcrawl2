@@ -13,7 +13,12 @@ else
   fi
   while [ $STEP -le $2 ]
   do
-    wget --content-disposition "http://agenciabrasil.ebc.com.br/galeriaimagens/images/fotos/$STEP/$SIZE?p_p_id=galeria" -P "data/images/$SIZE/$STEP"
+    if [ ! -d "data/images/$SIZE/$STEP" ]
+    then
+      wget --content-disposition "http://agenciabrasil.ebc.com.br/galeriaimagens/images/fotos/$STEP/$SIZE?p_p_id=galeria" -P "data/images/$SIZE/$STEP"
+    else
+      echo "data/images/$SIZE/$STEP exists already, skipped."
+    fi
     ((STEP++))
   done
 fi
