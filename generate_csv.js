@@ -2,7 +2,11 @@
 var fs = require('fs'),
     path = require('path');
 
+//constants
+var MAX_SPAWN = 200; //used to control how many simultaneous files should be opened at a given time
+
 //config
+
 // var data_path = "data",
 //     list_pages_folder = data_path + "/list_albums",
 //     albums_folder =  data_path + "/albums";
@@ -14,7 +18,9 @@ var data_path = "../abrcrawl2_data/data",
 //globals
 var albums = {},
     album_timestamps_progress,
-    album_photos_progress;
+    album_photos_progress,
+    open_files_count = 0,
+    execution_queue = [];
 
 /*
 Scan a folder containing the cached HTML files of album list pages and extract
@@ -79,24 +85,45 @@ function extractAlbumsTimestampFromHtml(html, albums){
 function getAlbumsPhotoLists(albums){
   album_photos_progress = 0;
   for (album_id in albums){
-    album_photos_progress = album_photos_progress + 1;
-    album_folder_path = path.join(albums_folder, album_id);
-    fs.readdir(album_folder_path, function (err, files){
-      var cached_html_filename, 
-          html_file_path;
-      console.log(this.album_path)
-      if (err) throw err;
-      cached_html_filename = findFirstCachedHTML(files);
-      html_file_path = path.join(this.album_path, cached_html_filename)
-      // -open the album show page html
-      fs.readFile(html_file_path, function(err, data){
-        if (err) throw err;
-        // -extract title, photo_ids and photo_titles
-        extractAlbumPhotolistFromHtml(data, this.albums, this.album_id);
-      }.bind({albums:this.albums, album_id:this.album_id}));
-    }.bind({album_id:album_id, album_path:album_folder_path, albums:albums}));
-    
+    album_photos_progress++;
+    execution_queue.push({f:getAlbumPhotoLists, params:[album_id, albums]})
   }
+  resumeQueue();
+}
+
+function resumeQueue(){
+  var task;
+  if (execution_queue.length > 0){
+    if (open_files_count < MAX_SPAWN) {
+      open_files_count++;
+      task = execution_queue.pop();
+      task.f.apply(this, task.params);
+      resumeQueue();
+    }
+  }
+}
+function getAlbumPhotoLists(album_id, albums){
+  var album_folder_path = path.join(albums_folder, album_id);
+  fs.readdir(album_folder_path, function (err, files){
+    var cached_html_filename, 
+        html_file_path;
+    if (err) throw err;
+    cached_html_filename = findFirstCachedHTML(files);
+    html_file_path = path.join(this.album_path, cached_html_filename)
+    fs.readFile(html_file_path, function(err, data){
+      if (err) {
+        if(err.errno === 24){
+          console.log('ERROR: Too many open files, try using a lower value for the MAX_SPAWN variable at the beggining of this script source file.')
+        }
+        throw err;
+      }
+      extractAlbumPhotolistFromHtml(data, this.albums, this.album_id);
+      open_files_count--;
+      if (open_files_count < MAX_SPAWN) {
+        resumeQueue();
+      }
+    }.bind({albums:this.albums, album_id:this.album_id}));
+  }.bind({album_id:album_id, album_path:album_folder_path, albums:albums}));
 }
 
 function extractAlbumPhotolistFromHtml(html, albums, album_id){
@@ -114,10 +141,10 @@ function extractAlbumPhotolistFromHtml(html, albums, album_id){
     pattern.lastIndex = matches.index + matches[0].length
   }
   albums[album_id].photos = photos;
-  console.log(album_photos_progress);
   album_photos_progress = album_photos_progress -1;
   if (album_photos_progress === 0) {
-    console.log(JSON.stringify(albums));
+    console.log('finished')
+    // console.log(JSON.stringify(albums));
   }
 }
 
@@ -130,4 +157,5 @@ function findFirstCachedHTML(files){
   });
   return cached_html_filename;
 }
+console.log('processing...')
 getAlbumsTimestamps(list_pages_folder, albums);
