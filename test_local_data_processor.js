@@ -20,6 +20,8 @@ var albums = {},
     album_timestamps_progress,
     album_photos_progress,
     open_files_count = 0,
+    biggest_caption = '',
+    scores = {},
     execution_queue = [];
 
 /*
@@ -73,6 +75,7 @@ function extractAlbumsTimestampFromHtml(html, albums){
     }
     if (matches[3]) {
       albums[album_id].title = matches[3];
+      computePrefixes(matches[3]);
     }
     date_id_and_title_pattern.lastIndex = matches.index + matches[0].length
   }
@@ -137,17 +140,74 @@ function extractAlbumPhotolistFromHtml(html, albums, album_id){
     photos[photo_id] = {};
     if (matches[2]) {
       photos[photo_id].caption = matches[2];
+      computePrefixes(matches[2]);
+      if (biggest_caption.length < matches[2].length){
+        biggest_caption = matches[2]
+      }
     }
     pattern.lastIndex = matches.index + matches[0].length
   }
   albums[album_id].photos = photos;
   album_photos_progress = album_photos_progress -1;
   if (album_photos_progress === 0) {
+    cleanScores();
     console.log('finished')
+    // console.log(biggest_caption)
+    // computePrefixes(biggest_caption)
+    console.log(scores)
     // console.log(JSON.stringify(albums));
   }
 }
-
+function cleanScores(){
+  var cleanscore = {},
+      score,
+      value,
+      sugestions = {};
+  for (prefix in scores){
+    score = scores[prefix];
+    for (tail in score){
+      value = score[tail];
+      if (value > 10 ){
+        if(!cleanscore[prefix]){
+          cleanscore[prefix] = {};
+        }
+        cleanscore[prefix][tail] = value;
+      }
+    }
+  }
+  scores = cleanscore;
+}
+function computePrefixes(text){
+  var separator_indexes = [0],
+      pattern = /[\s]/g,
+      matches;
+  while (matches = pattern.exec(text)){
+    separator_indexes.push(matches.index+1);
+  }
+  separator_indexes.push(Number.MAX_VALUE)
+  for(i=0; i < separator_indexes.length-1; i++){
+    head = text.substring(separator_indexes[i], separator_indexes[i+1]).toLowerCase();
+    tails = [];
+    for(j=i+1; j < Math.min(separator_indexes.length-1, 25); j++ ){
+      tails.push(text.substring(separator_indexes[i+1], separator_indexes[j+1]-1))
+    }
+    if(tails.length>0){
+      if(!scores[head]){
+        scores[head] = {}
+      }
+      tails.forEach(function(item){
+        if(!scores[head][item]){
+          scores[head][item]=0;
+        }
+        scores[head][item]++
+      });
+    }
+    // console.log(head)
+    // console.log(tails)
+    // console.log('-------------\n\n')
+  }
+  // console.log(scores)
+}
 function findFirstCachedHTML(files){
   var cached_html_filename = '';
   files.forEach(function (filename) {
@@ -159,3 +219,6 @@ function findFirstCachedHTML(files){
 }
 console.log('processing...')
 getAlbumsTimestamps(list_pages_folder, albums);
+
+// computePrefixes("this is a simple test, really very very very simple test this is")
+// console.log(scores)
