@@ -150,11 +150,12 @@ function extractAlbumPhotolistFromHtml(html, albums, album_id){
   albums[album_id].photos = photos;
   album_photos_progress = album_photos_progress -1;
   if (album_photos_progress === 0) {
-    cleanScores();
+    // cleanScores();
     console.log('finished')
+    console.log(albums)
     // console.log(biggest_caption)
     // computePrefixes(biggest_caption)
-    console.log(scores)
+    // console.log(scores)
     // console.log(JSON.stringify(albums));
   }
 }

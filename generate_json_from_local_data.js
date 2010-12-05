@@ -170,7 +170,7 @@ function extractAlbumPhotolistFromHtml(html, albums, album_id){
     // console.log('finished')
     // console.log(all_photos.length)
     // console.log(all_photos[10])
-    console.log(JSON.stringify(all_photos))
+    console.log(JSON.stringify(all_photos, null, 2))
     // console.log(biggest_caption)
     // console.log(scores)
     // console.log(JSON.stringify(albums));

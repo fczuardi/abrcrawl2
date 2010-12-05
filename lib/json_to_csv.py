@@ -1,3 +1,4 @@
+# borrowed from http://stackoverflow.com/questions/1871524/convert-from-json-to-csv-using-python/1872081#1872081
 import json
 import csv
 
