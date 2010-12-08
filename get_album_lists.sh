@@ -1,4 +1,4 @@
-#!/bun/bash
+#!/bin/bash
 DATA_PATH="../abrcrawl2_data/data"
 if [ -z $1 ]
 then

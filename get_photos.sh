@@ -1,4 +1,4 @@
-#!/bun/bash
+#!/bin/bash
 DATA_PATH="data"
 if [ -z $1 ]
 then

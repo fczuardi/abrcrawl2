@@ -1,4 +1,4 @@
-#!/bun/bash
+#!/bin/bash
 DATA_PATH="data"
 IMAGES_DIRECTORY="$DATA_PATH/images/high"
 METADATA_DIRECTORY="$DATA_PATH/images/metadata"
