@@ -1,5 +1,5 @@
 #!/bin/bash
-DATA_PATH="data"
+DATA_PATH="../abrcrawl2_data/data"
 if [ -z $1 ]
 then
   echo "Get a sequence of photos from agencia brazil's website. (wget is required)"
