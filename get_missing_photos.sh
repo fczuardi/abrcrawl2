@@ -2,6 +2,7 @@
 # echo "Compare 2 local image folders and re-download the missing files. (wget is required)"
 DATA_PATH="../abrcrawl2_data/data"
 SIZE1="small"
+#normal or high
 SIZE2="high"
 
 for dir in $(find "$DATA_PATH/images/$SIZE1" -type d)
